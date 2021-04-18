@@ -126,6 +126,7 @@ $RECYCLE.BIN/
 
 # production
 /build
+/dist
 
 # misc
 .env.local

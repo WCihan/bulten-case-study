@@ -41,7 +41,7 @@ module.exports = {
 			'error',
 			{
 				selector: 'default',
-				format: ['camelCase'],
+				format: ['camelCase', 'PascalCase'],
 				leadingUnderscore: 'allow',
 				trailingUnderscore: 'allow'
 			},
@@ -139,7 +139,7 @@ module.exports = {
 				markers: ['/']
 			}
 		],
-		'react/jsx-curly-brace-presence': { props: 'always', children: 'always' },
+		'react/jsx-curly-brace-presence': [2, { props: 'ignore', children: 'always' }],
 		'react/react-in-jsx-scope': 'off',
 		'react/destructuring-assignment': 'warn',
 		'react/button-has-type': 'warn',

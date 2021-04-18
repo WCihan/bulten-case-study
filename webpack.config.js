@@ -73,35 +73,26 @@ module.exports = function (webpackEnv) {
 	}
 
 	function getPlugins() {
-		const plugins = [
-			new CleanWebpackPlugin(),
-			HTMLWebpackPluginConfig,
-			new webpack.DefinePlugin({
-				'process.env.NODE_ENV': '"development"',
-				'process.env.BABEL_ENV': '"development"'
-			}),
-			MiniCssExtractPluginOptions
-		];
-
-		if (isDev) {
-			plugins.push(new webpack.HotModuleReplacementPlugin());
-		}
+		const plugins = [new CleanWebpackPlugin(), HTMLWebpackPluginConfig, MiniCssExtractPluginOptions];
 
 		return plugins;
 	}
-
 	return {
 		mode: isDev ? 'development' : 'production',
 		target: 'web',
 		bail: isProd,
 		entry: './src/index.tsx',
+		resolve: {
+			extensions: ['.tsx', '.ts', '.js'],
+			modules: ['node_modules']
+		},
 		devtool: isProd ? (shouldUseSourceMap ? 'source-map' : false) : isDev && 'eval',
 		plugins: getPlugins(),
 		module: {
 			rules: [
 				{
 					test: /\.(js|jsx|ts|tsx)$/,
-					enforce: 'pre',
+					exclude: /node_modules/,
 					use: [
 						{
 							loader: 'babel-loader',
@@ -117,18 +108,11 @@ module.exports = function (webpackEnv) {
 							},
 							loader: 'eslint-loader'
 						}
-					],
-					include: /src/
-				},
-				{
-					test: /\.js$/,
-					include: /src/,
-					loader: 'source-map-loader',
-					enforce: 'pre'
+					]
 				},
 				{
 					test: /\.(css)$/,
-					include: /src/,
+					exclude: /node_modules/,
 					use: getStyleLoaders({
 						importLoaders: 1,
 						sourceMap: isProd && shouldUseSourceMap
@@ -137,7 +121,7 @@ module.exports = function (webpackEnv) {
 				},
 				{
 					test: /\.(s[ac]ss)$/,
-					include: /src/,
+					exclude: /node_modules/,
 					use: getStyleLoaders({
 						importLoaders: 2,
 						sourceMap: isProd && shouldUseSourceMap
@@ -173,18 +157,12 @@ module.exports = function (webpackEnv) {
 				name: false
 			},
 			runtimeChunk: 'single',
-			moduleIds: 'deterministic',
 			mangleWasmImports: true,
 			removeAvailableModules: false
-		},
-		resolve: {
-			extensions: ['.tsx', '.ts', '.js'],
-			modules: ['node_modules']
 		},
 		output: {
 			path: path.resolve('dist'),
 			filename: '[name].bundle.js',
-			publicPath: '/',
 			clean: true
 		},
 		performance: false,

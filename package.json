@@ -13,10 +13,8 @@
 		"react-router-dom": "^5.2.0"
 	},
 	"scripts": {
-		"watch": "webpack --watch",
-		"start": "webpack serve --mode development",
-		"dev": "webpack --mode development",
-		"build": "webpack --mode production",
+		"start": "webpack s --node-env development --hot",
+		"build": "webpack --node-env production",
 		"test": "jest",
 		"lint": "tsc --noEmit && eslint src/**/*.ts{,x} -c .eslintrc.js --ignore-path .eslintignore",
 		"format": "eslint --fix src/**/*.ts{,x} -c .eslintrc.js --ignore-path .eslintignore",
@@ -79,9 +77,9 @@
 		"postcss-loader": "^5.2.0",
 		"postcss-preset-env": "^6.7.0",
 		"prettier": "^2.2.1",
+		"react-hot-loader": "^4.13.0",
 		"sass": "^1.32.8",
 		"sass-loader": "^11.0.1",
-		"source-map-loader": "^2.0.1",
 		"style-loader": "^2.0.0",
 		"terser-webpack-plugin": "^5.1.1",
 		"typescript": "^4.2.4",

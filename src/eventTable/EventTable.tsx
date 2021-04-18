@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import EventContext from '../context/EventContext';
+import EventContext, { TEvent } from '../context/EventContext';
 import useIsMounted from '../hooks/useIsMounted';
 import './EventTable.scss';
 
-export type IEvent = { [key: string]: any };
+export interface IBultenJson {
+	Events?: TEvent[];
+	default?: unknown;
+}
 
 const columnHeaders = [
 	'Yorumlar',
@@ -33,10 +36,10 @@ export default function EventTable() {
 	const isMounted = useIsMounted();
 	const [loading, setLoading] = useState(false);
 	const [shouldLoadMore, setShouldLoadMore] = useState(false);
-	const [allEvents, setAllEvents] = useState([] as IEvent[]);
-	const [renderedEvents, setRenderedEvents] = useState([] as IEvent[]);
+	const [allEvents, setAllEvents] = useState([] as TEvent[]);
+	const [renderedEvents, setRenderedEvents] = useState([] as TEvent[]);
 	const { coupon, setCoupon } = useContext(EventContext);
-	const loader = useRef(null);
+	const loader = useRef({} as HTMLTableSectionElement);
 	const loadPortion = 20;
 
 	useEffect(() => {
@@ -51,21 +54,21 @@ export default function EventTable() {
 		}, options);
 
 		if (loader.current) {
-			// @ts-ignore
 			observer.observe(loader.current);
 		}
 
-		import('../../bulten_data.json').then((bultenData: any) => {
-			const entries = Object.values(bultenData.Events) as IEvent[];
-			isMounted && setAllEvents(entries);
-			isMounted &&
-				setRenderedEvents([...entries.slice(0, entries.length > 100 ? 100 : entries.length)] as IEvent[]);
-			isMounted && setLoading(false);
+		import('../../bulten_data.json').then((bultenData: IBultenJson) => {
+			const entries = Object.values(bultenData?.Events || []) as TEvent[];
+			isMounted.current && setAllEvents(entries);
+			isMounted.current &&
+				setRenderedEvents([...entries.slice(0, entries.length > 100 ? 100 : entries.length)] as TEvent[]);
+			isMounted.current && setLoading(false);
 		});
 
 		return () => {
 			observer.disconnect();
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -76,13 +79,14 @@ export default function EventTable() {
 			setRenderedEvents([
 				...renderedEvents,
 				...allEvents.slice(renderedEvents.length, allEventsLength > lastIndex ? lastIndex : allEventsLength)
-			] as IEvent[]);
+			] as TEvent[]);
 			setShouldLoadMore(false);
 			setLoading(false);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [shouldLoadMore]);
 
-	const onEventClick = (event: IEvent, keyOfType: string, keyOfRate: string) => {
+	const onEventClick = (event: TEvent, keyOfType: string, keyOfRate: string) => {
 		return () => {
 			const rate = event?.OCG?.[keyOfType]?.OC?.[keyOfRate]?.O;
 
@@ -92,41 +96,49 @@ export default function EventTable() {
 				const match = event?.N;
 				const mbs = event?.OCG?.[keyOfType]?.MBS;
 
-				setCoupon((prevState: IEvent[]) => {
+				setCoupon((prevState: TEvent[]) => {
 					const stateInd = prevState.findIndex((e) => e.id === id);
 
-					if (~stateInd) {
+					if (stateInd !== -1) {
 						if (
 							prevState[stateInd].keyOfType === keyOfType &&
 							prevState[stateInd].keyOfRate === keyOfRate
 						) {
 							return prevState.filter((e) => e.id !== id);
-						} else {
-							const newState = [...prevState];
-							newState[stateInd] = { ...newState[stateInd], keyOfType, keyOfRate, rate, mbs };
-							return newState;
 						}
-					} else {
-						return [...prevState, { id, rate, type, match, mbs, keyOfType, keyOfRate }];
+						const newState = [...prevState];
+						newState[stateInd] = { ...newState[stateInd], keyOfType, keyOfRate, rate, mbs };
+						return newState;
 					}
+					return [...prevState, { id, rate, type, match, mbs, keyOfType, keyOfRate }];
 				});
 			}
 		};
 	};
 
-	const generateEventCell = (event: IEvent, keyOfType?: string, keyOfRate?: string) => {
+	const generateEventCell = (event: TEvent, keyOfType?: string, keyOfRate?: string) => {
 		const rateValue = keyOfType && keyOfRate ? event?.OCG?.[keyOfType]?.OC?.[keyOfRate]?.O : '';
 		const isSelected = coupon.find(
 			(e) => event.C === e.id && e.keyOfType === keyOfType && e.keyOfRate === keyOfRate
 		);
 
-		return (
+		return keyOfType && keyOfRate && rateValue ? (
 			<td
 				className={`${rateValue ? 'event__content__selectable' : ''}${
 					isSelected ? ' selectable--selected' : ''
 				}`}
 				role='button'
-				onClick={keyOfType && keyOfRate && rateValue ? onEventClick(event, keyOfType, keyOfRate) : undefined}
+				onClick={onEventClick(event, keyOfType, keyOfRate)}
+				tabIndex={0}
+				onKeyDown={({ key }) => key === 'Enter' && onEventClick(event, keyOfType, keyOfRate)()}
+			>
+				{rateValue || '-'}
+			</td>
+		) : (
+			<td
+				className={`${rateValue ? 'event__content__selectable' : ''}${
+					isSelected ? ' selectable--selected' : ''
+				}`}
 			>
 				{rateValue || '-'}
 			</td>
@@ -184,7 +196,7 @@ export default function EventTable() {
 						</React.Fragment>
 					))}
 				</tbody>
-				<tfoot ref={loader}></tfoot>
+				<tfoot ref={loader} />
 			</table>
 			<div className='event__loading'>{loading && 'Loading...'}</div>
 		</div>

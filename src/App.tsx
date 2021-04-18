@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import './App.scss';
-import EventContext from './context/EventContext';
+import EventContext, { TEvent } from './context/EventContext';
 import Coupon from './Coupon/Coupon';
-import EventTable, { IEvent } from './eventTable/EventTable';
+import EventTable from './EventTable/EventTable';
 
 const App = () => {
-	const [coupon, setCoupon] = useState([] as IEvent[]);
+	const [coupon, setCoupon] = useState([] as TEvent[]);
 
 	const value = {
 		coupon,
