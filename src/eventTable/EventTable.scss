@@ -1,0 +1,69 @@
+@import '../App.scss';
+
+.event--green {
+    color: $green;
+}
+
+.event--red {
+    color: $red;
+}
+
+.event__loading {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 2rem;
+}
+
+.event-container {
+    table {
+        text-align: left;
+        position: relative;
+        border-collapse: collapse;
+    }
+
+    th {
+        position: sticky;
+        top: 0;
+        background: $background;
+        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    tr {
+        :first-child {
+            font-weight: bold;
+        }
+    }
+
+    .event__content {
+        :first-child {
+            font-weight: normal;
+        }
+    }
+
+    td,
+    th {
+        border: $border;
+        padding: 0.4rem;
+    }
+}
+
+.event__content {
+    background-color: $event-background;
+}
+
+.event__content__row-span {
+    margin-right: 1rem;
+}
+
+.event__content__selectable {
+    cursor: pointer;
+
+    &:hover {
+        background-color: $event-hover-background;
+    }
+}
+
+.selectable--selected {
+    background-color: $event-selected-background;
+}

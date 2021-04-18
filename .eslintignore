@@ -1,0 +1,6 @@
+.build/*
+.dist/*
+.eslintrc.js
+webpack.config.js
+babel.config.js
+server.js

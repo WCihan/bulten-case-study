@@ -1,0 +1,36 @@
+@import '../App.scss';
+
+.coupon-container {
+    position: sticky;
+    width: 22rem;
+    bottom: 0.5rem;
+    float: right;
+    padding: 1rem;
+    border: $border;
+    border-radius: 0.5rem;
+    background-color: $coupon-background;
+    z-index: 1;
+    max-height: 35rem;
+    overflow: auto;
+
+}
+
+.coupon__row {
+    display: flex;
+    flex-direction: column;
+
+    &:not(:last-child) {
+        border-bottom: $border
+    }
+
+    &:last-child {
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+}
+
+.coupon__row__item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+}
