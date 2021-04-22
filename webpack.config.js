@@ -8,7 +8,6 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = function (webpackEnv) {
-	const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 	const isProd = webpackEnv === 'production';
 	const isDev = !isProd;
 
@@ -60,13 +59,13 @@ module.exports = function (webpackEnv) {
 					postcssOptions: {
 						plugins: [require('postcss-preset-env')(), require('autoprefixer')]
 					},
-					sourceMap: isProd && shouldUseSourceMap
+					sourceMap: isProd
 				}
 			},
 			{
 				loader: 'sass-loader',
 				options: {
-					sourceMap: isProd && shouldUseSourceMap
+					sourceMap: isProd
 				}
 			}
 		];
@@ -86,22 +85,15 @@ module.exports = function (webpackEnv) {
 			extensions: ['.tsx', '.ts', '.js'],
 			modules: ['node_modules']
 		},
-		devtool: isProd ? (shouldUseSourceMap ? 'source-map' : false) : isDev && 'eval',
+		devtool: isProd ? 'source-map' : isDev && 'eval',
 		plugins: getPlugins(),
 		module: {
 			rules: [
 				{
 					test: /\.(js|jsx|ts|tsx)$/,
 					exclude: /node_modules/,
+					enforce: 'pre',
 					use: [
-						{
-							loader: 'babel-loader',
-							options: {
-								cacheDirectory: true,
-								cacheCompression: isProd,
-								compact: isProd
-							}
-						},
 						{
 							options: {
 								eslintPath: require.resolve('eslint')
@@ -111,11 +103,26 @@ module.exports = function (webpackEnv) {
 					]
 				},
 				{
+					test: /\.(js|jsx|ts|tsx)$/,
+					exclude: /node_modules/,
+					use: [
+						{
+							loader: 'babel-loader',
+							options: {
+								presets: ['es2015'],
+								cacheDirectory: true,
+								cacheCompression: isProd,
+								compact: isProd
+							}
+						}
+					]
+				},
+				{
 					test: /\.(css)$/,
 					exclude: /node_modules/,
 					use: getStyleLoaders({
 						importLoaders: 1,
-						sourceMap: isProd && shouldUseSourceMap
+						sourceMap: isProd
 					}),
 					sideEffects: true
 				},
@@ -124,7 +131,7 @@ module.exports = function (webpackEnv) {
 					exclude: /node_modules/,
 					use: getStyleLoaders({
 						importLoaders: 2,
-						sourceMap: isProd && shouldUseSourceMap
+						sourceMap: isProd
 					}),
 					sideEffects: true
 				},
@@ -145,10 +152,7 @@ module.exports = function (webpackEnv) {
 			minimizer: [
 				`...`,
 				new TerserJSPlugin({
-					parallel: true,
-					terserOptions: {
-						sourceMap: shouldUseSourceMap
-					}
+					parallel: true
 				}),
 				new CssMinimizerPlugin({ parallel: true })
 			],
@@ -161,11 +165,18 @@ module.exports = function (webpackEnv) {
 			removeAvailableModules: false
 		},
 		output: {
-			path: path.resolve('dist'),
+			path: path.resolve(__dirname, 'dist'),
 			filename: '[name].bundle.js',
 			clean: true
 		},
 		performance: false,
+		externals: {
+			react: 'react'
+		},
+		externalsPresets: {
+			web: true,
+			webAsync: true
+		},
 		devServer: {
 			port: 8080,
 			contentBase: path.resolve(__dirname, 'dist'),
