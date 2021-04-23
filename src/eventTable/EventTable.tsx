@@ -124,24 +124,16 @@ export default function EventTable() {
 
 		return keyOfType && keyOfRate && rateValue ? (
 			<td
-				className={`${rateValue ? 'event__content__selectable' : ''}${
-					isSelected ? ' selectable--selected' : ''
-				}`}
+				className={`event__content__selectable${isSelected ? ' selectable--selected' : ''}`}
 				role='button'
 				onClick={onEventClick(event, keyOfType, keyOfRate)}
 				tabIndex={0}
 				onKeyDown={({ key }) => key === 'Enter' && onEventClick(event, keyOfType, keyOfRate)()}
 			>
-				{rateValue || '-'}
+				{rateValue}
 			</td>
 		) : (
-			<td
-				className={`${rateValue ? 'event__content__selectable' : ''}${
-					isSelected ? ' selectable--selected' : ''
-				}`}
-			>
-				{rateValue || '-'}
-			</td>
+			<td className={`${isSelected ? ' selectable--selected' : ''}`}>{rateValue || '-'}</td>
 		);
 	};
 

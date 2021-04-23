@@ -4,3 +4,4 @@
 webpack.config.js
 babel.config.js
 server.js
+.__mocks__/*
