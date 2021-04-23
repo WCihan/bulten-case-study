@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './App.scss';
 import EventContext, { TEvent } from './context/EventContext';
 import Coupon from './Coupon/Coupon';

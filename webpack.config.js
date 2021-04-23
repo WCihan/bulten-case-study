@@ -109,7 +109,6 @@ module.exports = function (webpackEnv) {
 						{
 							loader: 'babel-loader',
 							options: {
-								presets: ['es2015'],
 								cacheDirectory: true,
 								cacheCompression: isProd,
 								compact: isProd
@@ -170,9 +169,6 @@ module.exports = function (webpackEnv) {
 			clean: true
 		},
 		performance: false,
-		externals: {
-			react: 'react'
-		},
 		externalsPresets: {
 			web: true,
 			webAsync: true

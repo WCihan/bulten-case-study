@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import { useContext } from 'react';
 import EventContext from '../context/EventContext';
 import './Coupon.scss';
 

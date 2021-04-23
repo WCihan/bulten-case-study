@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import EventContext, { TEvent } from '../context/EventContext';
 import useIsMounted from '../hooks/useIsMounted';
 import './EventTable.scss';
@@ -158,7 +158,7 @@ export default function EventTable() {
 				</thead>
 				<tbody>
 					{renderedEvents.map((event, index) => (
-						<React.Fragment key={event.C}>
+						<Fragment key={event.C}>
 							<tr>
 								<td className='event--red'>
 									<span className='event--green'>{index}</span>
@@ -193,7 +193,7 @@ export default function EventTable() {
 								{generateEventCell(event)}
 								{generateEventCell(event)}
 							</tr>
-						</React.Fragment>
+						</Fragment>
 					))}
 				</tbody>
 				<tfoot ref={loader} />

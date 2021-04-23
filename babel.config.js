@@ -8,8 +8,13 @@ module.exports = function (api) {
 				targets: { node: 'current' }
 			}
 		],
-		'@babel/preset-react',
-		'@babel/preset-typescript',
+		[
+			'@babel/preset-react',
+			{
+				runtime: 'automatic'
+			}
+		],
+		['@babel/preset-typescript', { isTSX: true, allExtensions: true }],
 		'minify'
 	];
 
